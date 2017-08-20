@@ -36,3 +36,12 @@ class Visit(models.Model):
         choices=MARKS,
         default=2
     )
+
+    def __unicode__(self):
+        return self.location.country + ' ' + self.location.city
+
+    class Meta:
+        verbose_name = u'Посещение'
+        verbose_name_plural = u'Посещения'
+        ordering = ['-visited_at']
+

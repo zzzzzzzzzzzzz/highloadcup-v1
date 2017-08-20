@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+from django.core import serializers
+from django.forms.models import model_to_dict
 from django.http import HttpResponse, HttpResponseBadRequest, JsonResponse
 import json
 
@@ -15,27 +17,27 @@ from users.models import User
 class JsonDetail(View):
     model = None
 
-    def get_context(self, request):
-        return self.model.objects.filter(id=self.kwargs['id']).values()[0]
+    def get_object(self, request):
+        return get_object_or_404(self.model, id=self.kwargs['id'])
 
     def get(self, request, *args, **kwargs):
-        context = self.get_context(request)
-        return self.render_to_response(context)
+        obj = self.get_object(request)
+        return self.render_to_response(obj)
 
     def post(self, request, *args, **kwargs):
-        object =  get_object_or_404(self.model, id=kwargs['id'])
+        obj =  get_object_or_404(self.model, id=kwargs['id'])
         try:
-            object.update(**request.POST)
+            obj.update(**request.POST)
             return JsonResponse({})
         except self.model.ValidationError:
             return HttpResponseBadRequest()
 
     def render_to_response(self, context):
-        return HttpResponse(self.convert_context_to_json(context),
+        return HttpResponse(self.convert_object_to_json(context),
                             content_type='application/json')
 
-    def convert_context_to_json(self, context):
-        return json.dumps(context)
+    def convert_object_to_json(self, context):
+        return json.dumps(model_to_dict(context))
 
 
 class UserDetail(JsonDetail):

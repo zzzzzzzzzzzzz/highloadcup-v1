@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 
 from django.db import models
 
+
 class Location(models.Model):
     place = models.TextField(
         u'Описание достопримечательности'
@@ -22,6 +23,9 @@ class Location(models.Model):
         u'Расстояние в километрах',
     )
 
+    def __unicode__(self):
+        return self.city + ' ' + self.country
+
     class Meta:
-        verbose_name=u'Достопримечательность'
-        verbose_name_plural=u'Достопримечательности'
+        verbose_name = u'Достопримечательность'
+        verbose_name_plural = u'Достопримечательности'
