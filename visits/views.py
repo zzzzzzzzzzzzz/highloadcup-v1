@@ -4,6 +4,7 @@ from __future__ import unicode_literals
 import json
 
 from django.core.exceptions import SuspiciousOperation
+from django.db.models.expressions import F
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django.utils.decorators import method_decorator
@@ -11,7 +12,8 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import ListView, CreateView
 
 from users.models import User
-from users.views import JsonDetail
+from users.views import JsonDetail, MyCreateLogic
+from visits.form import PostForm
 from visits.models import Visit
 
 
@@ -35,7 +37,7 @@ class UserVisits(ListView):
         if 'toDistance' in self.request.GET:
             variable_params['location__distance__lt'] = self.request.GET['toDistance']
         try:
-            return Visit.objects.filter(user=user, **variable_params).values('mark', 'location', 'visited_at')
+            return Visit.objects.filter(user=user, **variable_params).values('mark', 'visited_at', place=F('location__place'))
         except:
             raise SuspiciousOperation("Invalid request; see documentation for correct paramaters")
 
@@ -47,6 +49,8 @@ class UserVisits(ListView):
         return json.dumps({'visits': list(self.object_list)})
 
 
-class VisitCreate(CreateView):
+@method_decorator(csrf_exempt, name='dispatch')
+class VisitCreate(MyCreateLogic):
     model = Visit
+    form_class = PostForm
 

@@ -8,8 +8,9 @@ GENDER_CHOICES = (
     ('f', 'Female')
 )
 
+
 class User(models.Model):
-    email = models.CharField(
+    email = models.EmailField(
         u'Электронная почта',
         max_length=100,
         default=None
