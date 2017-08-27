@@ -11,6 +11,7 @@ class Location(models.Model):
 
     country = models.CharField(
         u'Страна расположения',
+        db_index=True,
         max_length=50
     )
 
@@ -21,6 +22,7 @@ class Location(models.Model):
 
     distance = models.PositiveIntegerField(
         u'Расстояние в километрах',
+        db_index=True
     )
 
     def __unicode__(self):

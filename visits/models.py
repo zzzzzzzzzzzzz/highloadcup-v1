@@ -28,6 +28,7 @@ class Visit(models.Model):
 
     visited_at = models.IntegerField(
         u'Дата посещения',
+        db_index=True,
         default=0
     )
 
