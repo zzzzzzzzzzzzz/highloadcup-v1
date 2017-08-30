@@ -17,7 +17,9 @@ from django.core.cache import cache
 
 from users.form import PostForm
 from users.models import User
+
 CACHE_TTL = getattr(settings, 'CACHE_TTL', DEFAULT_TIMEOUT)
+
 
 class JsonDetail(View):
     model = None
@@ -32,7 +34,7 @@ class JsonDetail(View):
     def post(self, request, *args, **kwargs):
         obj = get_object_or_404(self.model, id=kwargs['id'])
         try:
-            for key,value in request.POST.iteritems():
+            for key, value in request.POST.iteritems():
                 setattr(obj, key, value)
             obj.save()
             return JsonResponse({})
@@ -44,11 +46,11 @@ class JsonDetail(View):
                             content_type='application/json')
 
     def convert_object_to_json(self, context):
-        key = self.model.__name__ + '_' + str(context['id'])
+        key = self.model.__name__ + '_' + str(context.id)
         resp = cache.get(key)
         if not resp:
             resp = json.dumps(model_to_dict(context))
-            cache.set(key, resp, timeout = CACHE_TTL)
+            cache.set(key, resp, timeout=CACHE_TTL)
         return resp
 
 
@@ -70,4 +72,3 @@ class UserCreate(MyCreateLogic):
 
 def success(request, *args, **kwargs):
     return JsonResponse({})
-
