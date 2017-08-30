@@ -16,7 +16,6 @@ from django.http import JsonResponse, Http404
 from django.shortcuts import get_object_or_404
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
-from django.views.generic import CreateView
 
 from locations.form import PostForm
 from locations.models import Location

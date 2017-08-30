@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from django.core import serializers
-from django.core.exceptions import ValidationError
+from django.conf import settings
+from django.core.cache.backends.base import DEFAULT_TIMEOUT
 from django.forms.models import model_to_dict
 from django.http import HttpResponse, HttpResponseBadRequest, JsonResponse
 import json
@@ -13,10 +13,11 @@ from django.utils.decorators import method_decorator
 from django.views import View
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import CreateView
+from django.core.cache import cache
 
 from users.form import PostForm
 from users.models import User
-
+CACHE_TTL = getattr(settings, 'CACHE_TTL', DEFAULT_TIMEOUT)
 
 class JsonDetail(View):
     model = None
@@ -43,7 +44,12 @@ class JsonDetail(View):
                             content_type='application/json')
 
     def convert_object_to_json(self, context):
-        return json.dumps(model_to_dict(context))
+        key = self.model.__name__ + '_' + str(context['id'])
+        resp = cache.get(key)
+        if not resp:
+            resp = json.dumps(model_to_dict(context))
+            cache.set(key, resp, timeout = CACHE_TTL)
+        return resp
 
 
 @method_decorator(csrf_exempt, name='dispatch')
