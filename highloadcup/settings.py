@@ -28,6 +28,7 @@ SECRET_KEY = config.get('main', 'SECRET')
 DEBUG = False
 
 ALLOWED_HOSTS = [
+    'localhost',
     'travels.com'
 ]
 
