@@ -10,10 +10,6 @@ GENDER_CHOICES = (
 
 
 class User(models.Model):
-    id = models.IntegerField(
-        primary_key=True
-    )
-
     email = models.EmailField(
         u'Электронная почта',
         max_length=100,
