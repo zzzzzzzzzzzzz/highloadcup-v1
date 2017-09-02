@@ -18,6 +18,10 @@ MARKS = (
 
 
 class Visit(models.Model):
+    id = models.IntegerField(
+        primary_key=True
+    )
+
     location = models.ForeignKey(
         Location
     )
